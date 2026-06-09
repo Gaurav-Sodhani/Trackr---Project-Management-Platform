@@ -28,21 +28,33 @@ Handler (HTTP)  →  Service (Business Logic)  →  Repository (Data Access)  �
 
 ## Quick Start
 
+### Option 1: Use the Live Demo (fastest)
+The API is live at https://trackr-api-yqo6.onrender.com with pre-seeded demo data.
+
+A **Postman collection** (`Trackr-Postman-Collection.json`) is included in the repo with all requests organized by feature. Import it into Postman and start testing -- all requests point to the live URL by default.
+
+> Note: Free tier sleeps after 15 min of inactivity. First request may take ~30s to wake up.
+
+### Option 2: Run Locally with Docker
 ```bash
-# Clone and start
 git clone https://github.com/Gaurav-Sodhani/Trackr---Project-Management-Platform.git
 cd Trackr---Project-Management-Platform
 
-# Start with Docker (recommended)
+# Start the app + PostgreSQL
 docker-compose up --build -d
 
-# Seed demo data
-docker-compose exec app ./server  # wait for startup
-go run ./seed                      # run from host (needs .env with DB_HOST=localhost)
-
-# Or run locally (needs PostgreSQL running)
+# Seed demo data (run from host machine)
 cp .env.example .env
+go run ./seed
+```
+
+### Option 3: Run Without Docker
+```bash
+# Requires PostgreSQL running locally
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
 go run ./cmd/server
+go run ./seed
 ```
 
 The API is available at `http://localhost:8080`.
