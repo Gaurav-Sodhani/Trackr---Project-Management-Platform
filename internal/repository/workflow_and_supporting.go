@@ -208,14 +208,19 @@ type SearchRepo struct{ db *gorm.DB }
 func NewSearchRepo(db *gorm.DB) *SearchRepo { return &SearchRepo{db: db} }
 
 // FullTextSearch searches issues using PostgreSQL tsvector.
+// Searches across issue titles, descriptions, AND comment bodies.
 func (r *SearchRepo) FullTextSearch(ctx context.Context, query string, projectID *uuid.UUID, limit int, cursor string) ([]models.Issue, int64, error) {
 	var issues []models.Issue
 	var total int64
 
+	// Search issues directly OR issues that have matching comments
 	q := r.db.WithContext(ctx).
 		Preload("Status").
 		Preload("Assignee").
-		Where("search_vector @@ plainto_tsquery('english', ?)", query)
+		Where(
+			"search_vector @@ plainto_tsquery('english', ?) OR id IN (SELECT issue_id FROM comments WHERE search_vector @@ plainto_tsquery('english', ?))",
+			query, query,
+		)
 
 	if projectID != nil {
 		q = q.Where("project_id = ?", *projectID)

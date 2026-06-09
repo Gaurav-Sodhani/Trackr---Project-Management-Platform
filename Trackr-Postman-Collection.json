@@ -1,0 +1,365 @@
+{
+	"info": {
+		"name": "Trackr - Project Management Platform",
+		"description": "API collection for Trackr demo walkthrough",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://trackr-api-yqo6.onrender.com"
+		},
+		{
+			"key": "project_id",
+			"value": "39b6a454-d779-5137-b284-705c0694babc"
+		},
+		{
+			"key": "jane_id",
+			"value": "905ccb36-4563-50eb-aab0-2fc8320b05dc"
+		},
+		{
+			"key": "bob_id",
+			"value": "13e69611-91c2-53c7-a6fc-b3891836884b"
+		},
+		{
+			"key": "alice_id",
+			"value": "dc3e8400-dccb-52f6-aae7-6cda59be1f57"
+		},
+		{
+			"key": "status_todo",
+			"value": "d6af6c63-b579-5ace-9fc6-d4d7270753c7"
+		},
+		{
+			"key": "status_inprogress",
+			"value": "9cb53c55-9147-5b78-bd80-7b2c3ce0d52c"
+		},
+		{
+			"key": "status_inreview",
+			"value": "2bfe2eac-7917-590a-8cb7-eba7b0ab5c24"
+		},
+		{
+			"key": "status_done",
+			"value": "26ec9cc1-8b8e-5212-b91f-de92341470f4"
+		},
+		{
+			"key": "issue_todo_cicd",
+			"value": "d470c309-9073-57de-9af9-b77bb95f0b4c"
+		},
+		{
+			"key": "issue_inprogress_workflow",
+			"value": "014c358c-eaed-5c37-8673-48b5002049a1"
+		},
+		{
+			"key": "issue_inreview_board",
+			"value": "8e3b7a15-9bdd-50ca-86b9-97d2564e4bc0"
+		},
+		{
+			"key": "sprint3_id",
+			"value": "1bced839-859f-56d0-bc88-03cc1ff0956d"
+		}
+	],
+	"item": [
+		{
+			"name": "1. SHOW EXISTING DATA",
+			"item": [
+				{
+					"name": "1a. List Users",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/users",
+						"description": "Show the 4 seeded users"
+					}
+				},
+				{
+					"name": "1b. List Projects",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects",
+						"description": "Show the TRACK project"
+					}
+				},
+				{
+					"name": "1c. Board View (Kanban)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/board",
+						"description": "Issues grouped by status columns - this powers the Kanban board"
+					}
+				},
+				{
+					"name": "1d. Workflow Statuses",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/statuses",
+						"description": "Configurable status columns per project"
+					}
+				},
+				{
+					"name": "1e. Transition Rules",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/transitions",
+						"description": "Allowed transitions between statuses"
+					}
+				},
+				{
+					"name": "1f. Sprints",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/sprints",
+						"description": "3 sprints: completed, active, planned"
+					}
+				},
+				{
+					"name": "1g. Custom Field Definitions",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/custom-fields",
+						"description": "Project-specific custom fields: Environment, Estimated Hours, Due Date"
+					}
+				}
+			]
+		},
+		{
+			"name": "2. CREATE THINGS LIVE",
+			"item": [
+				{
+					"name": "2a. Create New User",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/users",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"demo@company.com\",\n  \"display_name\": \"Demo User\"\n}"
+						},
+						"description": "Create a user live during demo"
+					}
+				},
+				{
+					"name": "2b. Create New Issue",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/projects/{{project_id}}/issues",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"bug\",\n  \"title\": \"Login page crashes on mobile Safari\",\n  \"description\": \"Users on iOS 17 see a white screen after OAuth redirect\",\n  \"priority\": \"high\",\n  \"reporter_id\": \"{{jane_id}}\",\n  \"assignee_id\": \"{{bob_id}}\",\n  \"story_points\": 3,\n  \"labels\": [\"bug\", \"mobile\", \"auth\"]\n}"
+						},
+						"description": "Creates issue with auto-generated key TRACK-12. Note: auto-assigns default status, auto-watches reporter"
+					}
+				},
+				{
+					"name": "2c. Create Sprint",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/projects/{{project_id}}/sprints",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sprint 4\",\n  \"goal\": \"Mobile bug fixes\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. SCENARIO 3 - Workflow Violation",
+			"item": [
+				{
+					"name": "3a. ILLEGAL: To Do → Done (WILL FAIL)",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/issues/{{issue_todo_cicd}}/transitions",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to_status_id\": \"{{status_done}}\",\n  \"user_id\": \"{{jane_id}}\"\n}"
+						},
+						"description": "422 - Cannot skip steps. Shows allowed transitions."
+					}
+				},
+				{
+					"name": "3b. LEGAL: To Do → In Progress (WILL PASS)",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/issues/{{issue_todo_cicd}}/transitions",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to_status_id\": \"{{status_inprogress}}\",\n  \"user_id\": \"{{jane_id}}\"\n}"
+						},
+						"description": "200 - Valid transition, status updated, version incremented"
+					}
+				}
+			]
+		},
+		{
+			"name": "4. SCENARIO 1 - Concurrent Updates",
+			"item": [
+				{
+					"name": "4a. Get Issue (note the version)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}",
+						"description": "Check the current version number"
+					}
+				},
+				{
+					"name": "4b. Update with WRONG version (WILL FAIL)",
+					"request": {
+						"method": "PATCH",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"priority\": \"critical\",\n  \"version\": 999,\n  \"user_id\": \"{{bob_id}}\"\n}"
+						},
+						"description": "409 Conflict - version mismatch, someone else modified this issue"
+					}
+				},
+				{
+					"name": "4c. Update with CORRECT version (WILL PASS)",
+					"request": {
+						"method": "PATCH",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"priority\": \"critical\",\n  \"version\": 1,\n  \"user_id\": \"{{bob_id}}\"\n}"
+						},
+						"description": "200 - Correct version, update succeeds, version bumps to 2"
+					}
+				}
+			]
+		},
+		{
+			"name": "5. COLLABORATION",
+			"item": [
+				{
+					"name": "5a. Add Comment with @mention",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}/comments",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"author_id\": \"{{jane_id}}\",\n  \"body\": \"@bob this workflow engine is looking great! Can @alice review the edge cases?\"\n}"
+						},
+						"description": "Auto-extracts @mentions, creates notifications, logs activity"
+					}
+				},
+				{
+					"name": "5b. List Threaded Comments",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}/comments",
+						"description": "Shows comments with extracted mentions array"
+					}
+				},
+				{
+					"name": "5c. Activity Feed (Audit Trail)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/activity?limit=10",
+						"description": "Every action logged: created, transitioned, commented"
+					}
+				},
+				{
+					"name": "5d. Watch an Issue",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}/watch",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{alice_id}}\"\n}"
+						}
+					}
+				},
+				{
+					"name": "5e. List Watchers",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/issues/{{issue_inprogress_workflow}}/watchers"
+					}
+				},
+				{
+					"name": "5f. User Notifications",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/users/{{bob_id}}/notifications",
+						"description": "Bob's notifications - assignments, mentions, status changes"
+					}
+				}
+			]
+		},
+		{
+			"name": "6. SEARCH",
+			"item": [
+				{
+					"name": "6a. Full-Text Search",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/search?q=OAuth",
+						"description": "PostgreSQL tsvector search across titles and descriptions"
+					}
+				},
+				{
+					"name": "6b. Structured Filter (by priority)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/search?priority=high&project_id={{project_id}}",
+						"description": "Filter issues by structured fields"
+					}
+				},
+				{
+					"name": "6c. Structured Filter (by status name)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/search?status=In Progress&project_id={{project_id}}",
+						"description": "Filter by status + project"
+					}
+				}
+			]
+		},
+		{
+			"name": "7. SPRINT MANAGEMENT",
+			"item": [
+				{
+					"name": "7a. Move Issue to Sprint",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/issues/{{issue_todo_cicd}}/move-to-sprint",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sprint_id\": \"{{sprint3_id}}\",\n  \"user_id\": \"{{jane_id}}\"\n}"
+						},
+						"description": "Move issue from current sprint/backlog to Sprint 3"
+					}
+				}
+			]
+		}
+	]
+}
