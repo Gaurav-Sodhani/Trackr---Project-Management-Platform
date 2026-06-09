@@ -6,23 +6,21 @@
 **Date:** 2026-06-09
 
 ### Context
-Take-home assignment for Swiggy SDE-1 Backend: Build a Jira-like project management platform backend.
-Both existing Swiggy applications (app-002, app-040) were for Go roles. Assignment doesn't mandate a language.
-Deadline: ~6 hours from start.
+Build a Jira-like project management platform backend with workflow engine, 
+real-time updates, and sprint management.
 
 ### Decision
 - **Language:** Go (Gin framework)
 - **Database:** PostgreSQL 16
 - **ORM:** GORM
 - **WebSocket:** gorilla/websocket
-- **API Docs:** Swagger via swaggo/swag
 - **Containerization:** Docker + docker-compose
-- **Deployment:** Render (free tier)
+- **Deployment:** Render
 
 ### Rationale
 | Choice | Why |
 |--------|-----|
-| Go | Aligns with Swiggy's tech stack. Both prior applications were for Go roles. Go's goroutine model is ideal for WebSocket concurrency. |
+| Go | Go's goroutine model is ideal for WebSocket concurrency. Strong stdlib, fast compilation, clean concurrency primitives. |
 | PostgreSQL | Relational data (projects, issues, sprints) needs referential integrity. PG supports JSONB for custom fields and tsvector for full-text search natively. |
 | GORM | Most popular Go ORM. Auto-migration, preloading, soft deletes. Reduces boilerplate. |
 | Gin | Fastest Go HTTP framework. Clean middleware model, binding/validation built-in. |
@@ -43,7 +41,7 @@ Repository (data access) → GORM queries, no business logic
 
 ### Why not microservices?
 Monolith is correct for this scope. A single service with clean internal boundaries. 
-Microservices would be over-engineering for a take-home and add deployment complexity.
+Microservices would add unnecessary deployment complexity without clear benefits at this scale.
 
 ### Design Patterns Used
 | Pattern | Where | Why |
@@ -78,9 +76,9 @@ Configurable per-project workflow with transition rules stored in the database.
 `version` column on issues. Updates use `WHERE id = ? AND version = ?`. If 0 rows affected → conflict.
 
 **Why not pessimistic locking?** 
-- Take-home scope doesn't need distributed locks
 - Optimistic locking is simpler, performs better for read-heavy workloads
-- Matches the assignment's Scenario 1 requirements
+- Project boards are read-heavy -- users view far more than they edit
+- Matches the concurrent update scenario requirements
 
 ---
 
@@ -95,7 +93,7 @@ Use PostgreSQL's native `tsvector` + GIN index instead of Elasticsearch.
 - Weighted search: title matches rank higher than description matches (setweight A vs B)
 - Auto-updated via trigger on INSERT/UPDATE
 
-**Trade-off:** Won't scale to millions of issues like ES would, but perfect for this assignment's scope.
+**Trade-off:** Won't scale to millions of issues like ES would, but well-suited for this project's scope.
 
 ---
 
