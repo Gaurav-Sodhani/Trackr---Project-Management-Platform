@@ -136,10 +136,11 @@ func (r *IssueRepo) ListBacklog(ctx context.Context, projectID uuid.UUID) ([]mod
 }
 
 // UpdateWithVersion uses optimistic locking -- only updates if version matches.
+// Uses Table() instead of Model() to avoid GORM overriding values from the struct.
 func (r *IssueRepo) UpdateWithVersion(ctx context.Context, issue *models.Issue) error {
 	result := r.db.WithContext(ctx).
-		Model(issue).
-		Where("id = ? AND version = ?", issue.ID, issue.Version).
+		Table("issues").
+		Where("id = ? AND version = ? AND deleted_at IS NULL", issue.ID, issue.Version).
 		Updates(map[string]interface{}{
 			"title":         issue.Title,
 			"description":   issue.Description,
@@ -151,6 +152,7 @@ func (r *IssueRepo) UpdateWithVersion(ctx context.Context, issue *models.Issue) 
 			"labels":        issue.Labels,
 			"custom_fields": issue.CustomFields,
 			"version":       gorm.Expr("version + 1"),
+			"updated_at":    gorm.Expr("NOW()"),
 		})
 	if result.RowsAffected == 0 {
 		return ErrConflict
