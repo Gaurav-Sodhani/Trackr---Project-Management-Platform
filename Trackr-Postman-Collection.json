@@ -360,6 +360,50 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "8. SCENARIO 2 - Sprint Completion with Carry-Over",
+			"item": [
+				{
+					"name": "8a. List Sprints (check current state)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/sprints",
+						"description": "Shows 3 sprints: Sprint 1 (completed), Sprint 2 (active), Sprint 3 (planned). We will complete Sprint 2."
+					}
+				},
+				{
+					"name": "8b. List Issues in Sprint 2 (before completion)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/search?project_id={{project_id}}",
+						"description": "Check which issues are in Sprint 2 and their statuses. Mix of Done, In Progress, To Do, In Review."
+					}
+				},
+				{
+					"name": "8c. Complete Sprint 2 (SCENARIO 2)",
+					"request": {
+						"method": "POST",
+						"url": "{{base_url}}/api/sprints/ea660376-4898-5822-962f-310ca93c34d3/complete",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"carry_over_issue_ids\": [\n    \"8e3b7a15-9bdd-50ca-86b9-97d2564e4bc0\",\n    \"014c358c-eaed-5c37-8673-48b5002049a1\"\n  ],\n  \"new_sprint_id\": \"1bced839-859f-56d0-bc88-03cc1ff0956d\",\n  \"user_id\": \"905ccb36-4563-50eb-aab0-2fc8320b05dc\"\n}"
+						},
+						"description": "Completes Sprint 2. Returns: completed_issues (Done), incomplete_issues (not Done), velocity (story points completed). Carries over 2 selected incomplete issues to Sprint 3, remaining go to backlog."
+					}
+				},
+				{
+					"name": "8d. List Sprints (after completion)",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/projects/{{project_id}}/sprints",
+						"description": "Sprint 2 should now show status=completed with end_date set"
+					}
+				}
+			]
 		}
 	]
 }
