@@ -1,0 +1,22 @@
+# .env files
+.env
+
+# Go binaries
+bin/
+*.exe
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker data volumes
+pgdata/
+
+# Swagger generated (will regenerate)
+docs/docs.go
+docs/swagger.json
+docs/swagger.yaml
