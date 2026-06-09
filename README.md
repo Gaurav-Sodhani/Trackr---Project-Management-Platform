@@ -2,6 +2,8 @@
 
 A Jira-like project management backend built with Go, featuring a configurable workflow engine, real-time updates via WebSocket, and full-text search.
 
+**Live Demo:** https://trackr-api-yqo6.onrender.com (free tier - may take ~30s to wake up on first request)
+
 ## Tech Stack
 
 | Component | Technology |
